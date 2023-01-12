@@ -123,9 +123,9 @@ else:
     sig_in = sort_sig_input(sig, atten_cond)
 
 ## calc stats
-data_mean = np.average(np.average(sig_in[:, 0:int(np.ceil(T*fs/1000))], axis=1), axis=0)
-data_var = np.average(np.var(sig_in[:, 0:int(np.ceil(T*fs/1000))], axis=1), axis=0)
-numTrials = sig_in.shape[0]
+# data_mean = np.average(np.average(sig_in[:, 0:int(np.ceil(T*fs/1000))], axis=1), axis=0)
+# data_var = np.average(np.var(sig_in[:, 0:int(np.ceil(T*fs/1000))], axis=1), axis=0)
+# numTrials = sig_in.shape[0]
 data_sumStat = comp_psd(sig_in[:, 0:int(np.ceil(T*fs/1000))])
 
 # Define the prior distribution
