@@ -4,7 +4,7 @@ sys.path.append('./abcTau')
 # import the package
 import abcTau
 import numpy as np
-
+sys.path.append('./mat73')
 import mat73
 from scipy import stats
 import pandas as pd
@@ -71,8 +71,8 @@ layer = sys.argv[5]
 
 
 # extract statistics from real data
-#datadir = '/mnt/qb/levina/yxiong34/annalab/data'
-datadir = '/Volumes/NONAME/data_for_Yirong'
+datadir = '/mnt/qb/work/wu/yxiong34/levina_data'
+#datadir = '/Volumes/NONAME/data_for_Yirong'
 
 ## get data information from csv
 df = pd.read_csv(os.path.join(datadir, 'Subject_Info_corrected.csv'), index_col=0)
@@ -86,12 +86,12 @@ filepath = os.path.join(datadir, 'M%d%s-LFP/%s_%s_LFP_%s_sorted.mat' % (monkey_i
 data = mat73.loadmat(filepath)['LfpStruct']['Sorted']
 
 ## set parameters
-T_dic = {'PreFirstDimDataBiZSc': 1000, 'StationaryDataBiZSc': 430}
+T_dic = {'PreFirstDimDataBiZSc': 1024, 'StationaryDataBiZSc': 430}
 
-fs = 1017.375
+fs = 1000
 T = T_dic[epoch]
-deltaT = T / fs  # temporal resolution of data.
-binSize = T / fs  # bin-size for binning data and computing the autocorrelation.
+deltaT = 1000 / fs  # temporal resolution of data.
+binSize = 1000 / fs  # bin-size for binning data and computing the autocorrelation.
 
 disp = None  # put the disperssion parameter if computed with grid-search
 maxTimeLag = None  # only used when using autocorrelation for summary statistics
@@ -106,7 +106,7 @@ generativeModel = sys.argv[6] #oneTauOU_oscil
 distFunc = 'logarithmic_distance'
 
 # set fitting params
-epsilon_0 = 500  # initial error threshold
+epsilon_0 = 200  # initial error threshold
 min_samples = 100  # min samples from the posterior
 steps = 60  # max number of iterations
 minAccRate = 0.01  # minimum acceptance rate to stop the iterations
@@ -123,30 +123,31 @@ else:
     sig_in = sort_sig_input(sig, atten_cond)
 
 ## calc stats
-# data_mean = np.average(np.average(sig_in[:, 0:int(np.ceil(T*fs/1000))], axis=1), axis=0)
-# data_var = np.average(np.var(sig_in[:, 0:int(np.ceil(T*fs/1000))], axis=1), axis=0)
-# numTrials = sig_in.shape[0]
+numTrials = sig_in.shape[0]
 data_sumStat = comp_psd(sig_in[:, 0:int(np.ceil(T*fs/1000))])
+data_mean = np.average(np.average(sig_in[:, 0:int(np.ceil(T*fs/1000))], axis=1), axis=0)
+data_var = np.average(np.var(sig_in[:, 0:int(np.ceil(T*fs/1000))], axis=1), axis=0)
 
 # Define the prior distribution
 # for a uniform prior: stats.uniform(loc=x_min,scale=x_max-x_min)
 t_min = 0.0  # first timescale
 t_max = T
-prior = {'oneTauOU_oscil':[stats.uniform(loc=t_min, scale=t_max - t_min), stats.norm(loc=15, scale=1), stats.uniform(loc=0.2, scale=0.5)],
-         'oneTauOU':[stats.uniform(loc=t_min, scale=t_max - t_min)],
-         'twoTauOU':[stats.uniform(loc=t_min, scale=t_max - t_min), stats.uniform(loc=t_min, scale=t_max - t_min), stats.uniform(loc=0.2, scale=0.5)]}
+tau_scale = 100
+prior = {'oneTauOU_oscil':[stats.uniform(loc=t_min, scale=tau_scale), stats.norm(loc=15, scale=10), stats.uniform(loc=0.1, scale=0.8)],
+         'oneTauOU':[stats.uniform(loc=t_min, scale=tau_scale)],
+         'twoTauOU':[stats.uniform(loc=t_min, scale=tau_scale), stats.uniform(loc=t_min, scale=tau_scale), stats.uniform(loc=0.2, scale=0.7)]}
 priorDist = prior[generativeModel]
 
 # path for loading and saving data
-datasave_path = os.path.join(datadir, '../abc_results_%s_M%d_%s_%s/' % (sid, mid, atten_cond, epoch))
+datasave_path = os.path.join(datadir, '../levina_results/abc_results_%s/' %generativeModel)
 os.makedirs(datasave_path, exist_ok=True)
 
 # path and filename to save the intermediate results after running each step
-inter_save_direc = os.path.join(datadir, '../abc_results_%s_M%d_%s_%s/' % (sid, mid, atten_cond, epoch))
-inter_filename = 'abc_intermediate_results_psd'
+inter_save_direc = os.path.join(datadir, '../levina_results/abc_results_%s/' %generativeModel)
+inter_filename = 'abc_intermediate_results_%s_M%d_%s_%s_%s' % (sid, mid, atten_cond, epoch, layer)
 
 # load real data and define filenameSave
-filenameSave = '%s_%s_M%d_%s_%s' % (generativeModel, sid, mid, atten_cond, epoch)
+filenameSave = '%s_M%d_%s_%s_%s' % (sid, mid, atten_cond, epoch, layer)
 
 # creating model object
 class MyModel(abcTau.Model):
