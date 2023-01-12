@@ -71,8 +71,8 @@ layer = sys.argv[5]
 
 
 # extract statistics from real data
-#datadir = '/mnt/qb/levina/yxiong34/annalab/data'
-datadir = '/Volumes/NONAME/data_for_Yirong'
+datadir = '/mnt/qb/work/wu/yxiong34/levina_data'
+#datadir = '/Volumes/NONAME/data_for_Yirong'
 
 ## get data information from csv
 df = pd.read_csv(os.path.join(datadir, 'Subject_Info_corrected.csv'), index_col=0)
@@ -90,8 +90,8 @@ T_dic = {'PreFirstDimDataBiZSc': 1024, 'StationaryDataBiZSc': 430}
 
 fs = 1000
 T = T_dic[epoch]
-deltaT = T / fs  # temporal resolution of data.
-binSize = T / fs  # bin-size for binning data and computing the autocorrelation.
+deltaT = 1000 / fs  # temporal resolution of data.
+binSize = 1000 / fs  # bin-size for binning data and computing the autocorrelation.
 
 disp = None  # put the disperssion parameter if computed with grid-search
 maxTimeLag = None  # only used when using autocorrelation for summary statistics
