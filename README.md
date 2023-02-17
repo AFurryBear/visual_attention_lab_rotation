@@ -5,9 +5,11 @@
 ## Modification of FOOOF
 ### aperiodic model of original fooof
 $$AP(F) = \frac{c}{knee+F_k^\chi}$$
+
 ![fitting procedures of original fooof](https://github.com/AFurryBear/visual_attention_lab_rotation/blob/main/imgs/original_fooof_fitting.png?raw=true)
 ### aperiodic model of modified fooof
 $$AP(F) = c_1(\frac{c_2}{F^{\chi_2}+F_k^{\chi_2}}+\frac{1}{F^{\chi_1}+F_k^{\chi_1}})$$
+
 ![fitting procedures of modified fooof](https://github.com/AFurryBear/visual_attention_lab_rotation/blob/main/imgs/modified_fooof_fitting.png?raw=true)
 
 ## use the new model
