@@ -13,12 +13,13 @@ $$AP(F) = c_1(\frac{c_2}{F^{\chi_2}+F_k^{\chi_2}}+\frac{1}{F^{\chi_1}+F_k^{\chi_
 ![fitting procedures of modified fooof](https://github.com/AFurryBear/visual_attention_lab_rotation/blob/main/imgs/modified_fooof_fitting.png?raw=true)
 
 ## use the new model
+```
 - add fit_modified.py under fooof/objs/
 - add 'from .fit_modified import FOOOF_new' in fooof/objs/__init__.py
 - add 'from .objs import FOOOF_new' in fooof/__init__.py
 
 - in your script
-```
+
 from fooof import FOOOF_new
 ```
 
